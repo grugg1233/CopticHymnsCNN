@@ -13,27 +13,40 @@ import pandas as pd
 import IPython.display as ipd
 import matplotlib.pyplot as plt
 
+from config import Config as C
 
-mp3Golgotha1="data/hymns/golgotha/golgotha1.mp3"
-mp3Golgotha2="data/hymns/golgotha/golgotha2.mp3"
-mp3Jenainan1="data/hymns/jenainan/jenainan1.mp3"
-mp3Jenainan2="data/hymns/jenainan/jenainan2.mp3"
-mp3Taishori1="data/hymns/taiShori/taishori1.mp3"
-mp3Tishori1="data/hymns/tishori/tishori1.mp3"
-        
-CLIP_SEC = 5.0
-HOP_SEC = 2.5
-TARGET_SR = 16_000
-N_MELS = 64
+
+mp3Golgotha1 =   f"{C.DATA_ROOT}/golgotha/golgotha1.mp3"
+mp3Golgotha2 =   f"{C.DATA_ROOT}/golgotha/golgotha2.mp3"
+mp3Golgotha3 =   f"{C.DATA_ROOT}/golgotha/golgotha3.mp3"
+
+mp3Jenainan1 =   f"{C.DATA_ROOT}/jenainan/jenainan1.mp3"
+mp3Jenainan2 =   f"{C.DATA_ROOT}/jenainan/jenainan2.mp3"
+mp3Jenainan3 =   f"{C.DATA_ROOT}/jenainan/jenainan3.mp3"
+
+mp3Taishori1 =   f"{C.DATA_ROOT}/taiShori/taishori1.mp3"
+mp3Taishori2 =   f"{C.DATA_ROOT}/taiShori/taishori2.mp3"
+
+mp3Tishori1  =   f"{C.DATA_ROOT}/tishori/tishori1.mp3"
+mp3Tishori2  =   f"{C.DATA_ROOT}/tishori/tishori2.mp3"
+
+CLIP_SEC = C.CLIP_SEC
+HOP_SEC = C.HOP_SEC
+TARGET_SR = C.SAMPLE_RATE
+N_MELS = C.N_MELS
 
 def load_all_hymns() -> List[Tuple[str, torch.Tensor, int]]: 
     all_file_paths = [
         mp3Golgotha1,
         mp3Golgotha2,
+        mp3Golgotha3,
         mp3Jenainan1,
         mp3Jenainan2,
+        mp3Jenainan3,
         mp3Taishori1,
+        mp3Taishori2,
         mp3Tishori1,
+        mp3Tishori2,
     ]
     #stores file_path, waveform, sample rate
     loaded_data: List[Tuple[str, torch.Tensor, int]] = []
@@ -152,15 +165,17 @@ class HymnSnippetDataset(Dataset):
 
         return mel_db, label_id
 
+def loadTheData() : 
+    label_map = C.LABEL_MAP
+    loaded_data = load_all_hymns()
+    snippet_index=build_snippet_index(loaded_data, label_map)
+    dataset = HymnSnippetDataset(loaded_data, snippet_index)
+    return dataset
 
 
+"""
 def main(): 
-    label_map = {
-        "golgotha" : 0,
-        "jenainan" : 1,
-        "taishori" : 2,
-        "tishori" : 3
-    }
+    label_map = C.LABEL_MAP
 
     loaded_data = load_all_hymns()
 
@@ -192,3 +207,5 @@ def main():
 
 if __name__=="__main__":
     main()
+    
+"""
