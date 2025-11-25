@@ -80,33 +80,34 @@ The training loop supports:
 ```mermaid
 flowchart LR
 
-    %% RAW AUDIO
-    A[Raw audio corpus\n(Coptic hymns + future secular/other religious)] --> B[Windowing\n5s overlapping clips]
-    B --> C[Mel-spectrograms\n(1 x N_MELS x T)]
+    A[Raw audio corpus: Coptic hymns and future datasets]
+    B[Windowing: 5 second overlapping clips]
+    C[Mel spectrograms: 1 x N_MELS x T]
+
+    A --> B --> C
 
     %% CNN TRAINING PATH
-    C --> D[CNN backbone\nconv + BN + ReLU blocks]
-    D --> E[Global Avg Pool\nfeature vector f_L(x)]
-    E --> F[Classification head\nlinear layer]
-    F --> G[Predicted hymn label\n(Golgotha / Je Nai Nan / Tai Shori / Ti Shori)]
+    C --> D[CNN backbone: conv BN ReLU blocks]
+    D --> E[Global average pooling: feature vector]
+    E --> F[Classification head: linear layer]
+    F --> G[Predicted hymn label]
 
-    %% TRAINING LOOP
-    G --> H[Cross-entropy loss\n+ LR scheduler]
+    G --> H[Training loop: cross entropy and scheduler]
     H --> D
-    F --> I[Checkpoints\nsaved models]
+    F --> I[Saved checkpoints]
 
-    %% REPRESENTATION / NC ANALYSIS
+    %% REPRESENTATION ANALYSIS
     D -. freeze weights .- J[Frozen CNN backbone]
-    J --> K[Intermediate features\nf_l(x) from layers conv2, conv3, conv4]
+    J --> K[Intermediate features from multiple layers]
+    K --> L[Linear probes per layer]
+    K --> M[Neural Collapse metrics]
+    K --> N[Feature space visualization]
 
-    K --> L[Linear probes\n(one per layer)]
-    K --> M[Neural Collapse metrics\nNC-1, NC-2, etc.]
-    K --> N[Feature-space plots\nclass means & clusters]
-
-    %% DOMAIN / TRANSFER
-    A2[Additional audio\n(religious vs secular)] --> B2[Same preprocessing\nwindowing + melspec]
+    %% TRANSFER LEARNING
+    A2[Additional audio: religious and secular] --> B2[Preprocessing: windowing + mel]
     B2 --> J
 
-    N --> O[Compare subspaces\nreligious vs secular]
+    N --> O[Compare subspaces across domains]
     M --> O
+
 
