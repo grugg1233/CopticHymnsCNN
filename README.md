@@ -1,5 +1,41 @@
 # Coptic Hymns Audio Classifier (Work in Progress)
 
+
+```mermaid
+flowchart LR
+
+    A[Raw audio corpus: Coptic hymns and future datasets]
+    B[Windowing: 5 second overlapping clips]
+    C[Mel spectrograms: 1 x N_MELS x T]
+
+    A --> B --> C
+
+    %% CNN TRAINING PATH
+    C --> D[CNN backbone: conv BN ReLU blocks]
+    D --> E[Global average pooling: feature vector]
+    E --> F[Classification head: linear layer]
+    F --> G[Predicted hymn label]
+
+    G --> H[Training loop: cross entropy and scheduler]
+    H --> D
+    F --> I[Saved checkpoints]
+
+    %% REPRESENTATION ANALYSIS
+    D -. freeze weights .- J[Frozen CNN backbone]
+    J --> K[Intermediate features from multiple layers]
+    K --> L[Linear probes per layer]
+    K --> M[Neural Collapse metrics]
+    K --> N[Feature space visualization]
+
+    %% TRANSFER LEARNING
+    A2[Additional audio: religious and secular] --> B2[Preprocessing: windowing + mel]
+    B2 --> J
+
+    N --> O[Compare subspaces across domains]
+    M --> O
+
+```
+
 This project explores whether a convolutional neural network (CNN) can learn meaningful representations of long-form liturgical audio—specifically Coptic Orthodox hymns—and classify them into their respective hymn categories. The long-term goal is to use this system as the foundation for a broader research program on representation geometry, neural collapse, and subspace structure in audio models.
 
 The current version implements:
@@ -76,38 +112,4 @@ The training loop supports:
 - validation after each epoch  
 - checkpointing every N epochs  
 - Reduce-on-Plateau learning rate scheduling  
-
-```mermaid
-flowchart LR
-
-    A[Raw audio corpus: Coptic hymns and future datasets]
-    B[Windowing: 5 second overlapping clips]
-    C[Mel spectrograms: 1 x N_MELS x T]
-
-    A --> B --> C
-
-    %% CNN TRAINING PATH
-    C --> D[CNN backbone: conv BN ReLU blocks]
-    D --> E[Global average pooling: feature vector]
-    E --> F[Classification head: linear layer]
-    F --> G[Predicted hymn label]
-
-    G --> H[Training loop: cross entropy and scheduler]
-    H --> D
-    F --> I[Saved checkpoints]
-
-    %% REPRESENTATION ANALYSIS
-    D -. freeze weights .- J[Frozen CNN backbone]
-    J --> K[Intermediate features from multiple layers]
-    K --> L[Linear probes per layer]
-    K --> M[Neural Collapse metrics]
-    K --> N[Feature space visualization]
-
-    %% TRANSFER LEARNING
-    A2[Additional audio: religious and secular] --> B2[Preprocessing: windowing + mel]
-    B2 --> J
-
-    N --> O[Compare subspaces across domains]
-    M --> O
-
 
