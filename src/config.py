@@ -7,7 +7,7 @@ class Config():
     LOGS = f"{ROOT}/logs"
     BEST_MODEL = f"{CHECKPOINTS}/best_hymn_cnn.pt"
 
-    DATA_ROOT = "/kaggle/input/hymnologicaldata/data/hymns"
+    DATA_ROOT = "/kaggle/input/copticsongs/data/hymns"
 
     #audio features
     SAMPLE_RATE=16_000
