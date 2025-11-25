@@ -77,5 +77,36 @@ The training loop supports:
 - checkpointing every N epochs  
 - Reduce-on-Plateau learning rate scheduling  
 
-All checkpointed models are saved into:
+```mermaid
+flowchart LR
+
+    %% RAW AUDIO
+    A[Raw audio corpus\n(Coptic hymns + future secular/other religious)] --> B[Windowing\n5s overlapping clips]
+    B --> C[Mel-spectrograms\n(1 x N_MELS x T)]
+
+    %% CNN TRAINING PATH
+    C --> D[CNN backbone\nconv + BN + ReLU blocks]
+    D --> E[Global Avg Pool\nfeature vector f_L(x)]
+    E --> F[Classification head\nlinear layer]
+    F --> G[Predicted hymn label\n(Golgotha / Je Nai Nan / Tai Shori / Ti Shori)]
+
+    %% TRAINING LOOP
+    G --> H[Cross-entropy loss\n+ LR scheduler]
+    H --> D
+    F --> I[Checkpoints\nsaved models]
+
+    %% REPRESENTATION / NC ANALYSIS
+    D -. freeze weights .- J[Frozen CNN backbone]
+    J --> K[Intermediate features\nf_l(x) from layers conv2, conv3, conv4]
+
+    K --> L[Linear probes\n(one per layer)]
+    K --> M[Neural Collapse metrics\nNC-1, NC-2, etc.]
+    K --> N[Feature-space plots\nclass means & clusters]
+
+    %% DOMAIN / TRANSFER
+    A2[Additional audio\n(religious vs secular)] --> B2[Same preprocessing\nwindowing + melspec]
+    B2 --> J
+
+    N --> O[Compare subspaces\nreligious vs secular]
+    M --> O
 
